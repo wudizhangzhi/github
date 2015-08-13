@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/base_dialog_bg"
+    android:minHeight="300dp"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:id="@+id/dialogbase_ll_top"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:id="@+id/dialogbase_iv_title_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:paddingLeft="5dp" />
+
+        <TextView
+            android:id="@+id/dialogbase_tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="提示" />
+    </LinearLayout>
+
+    <View
+        android:id="@+id/dialogbase_view_redline"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/base_horizontal_line_red" />
+
+    <LinearLayout
+        android:id="@+id/dialogbase_ll_contentPanel"
+        android:layout_width="match_parent"
+        android:layout_height="0px"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingBottom="15dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="15dp" >
+
+        <TextView
+            android:id="@+id/dialogbase_tv_message"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:gravity="left|center"
+            android:lineSpacingMultiplier="1.2" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/dialogbase_fl_customPanel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" >
+
+        <FrameLayout
+            android:id="@+id/dialogbase_fl_custom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </FrameLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#cacaca" />
+    
+    <LinearLayout
+        android:id="@+id/dialogbase_ll_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:id="@+id/dialogbase_ll_leftspacer"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:orientation="horizontal"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/dialogbase_bt_negativebutton"
+            android:layout_width="0px"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:maxLines="2"
+            android:paddingLeft="10dip"
+            android:paddingRight="10dip"
+            android:singleLine="true" />
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:background="#cacaca" />
+
+        <Button
+            android:id="@+id/dialogbase_bt_positivebutton"
+            android:layout_width="0px"
+            android:layout_height="35dp"
+            android:layout_gravity="center_vertical"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:maxLines="2"
+            android:paddingLeft="10dip"
+            android:paddingRight="10dip"
+            android:singleLine="true" />
+
+        <LinearLayout
+            android:id="@+id/dialogbase_ll_rightspacer"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:orientation="horizontal"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</LinearLayout>

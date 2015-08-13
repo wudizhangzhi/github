@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/base_comment_emo_bar"
+    android:gravity="center_vertical"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp" >
+
+        <Button
+            android:id="@+id/chat_btn_add"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/btn_add_selector" />
+
+        <Button
+            android:id="@+id/chat_btn_emo"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="6dp"
+            android:background="@drawable/btn_emo_selector" />
+
+        <com.example.im_zzc.view.EmotionsEditText
+            android:id="@+id/chat_edit_comment"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/base_edit_input"
+            android:inputType="textMultiLine"
+            android:padding="5dp" />
+
+        <Button
+            android:id="@+id/chat_btn_speak"
+            android:layout_width="0dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_chat_record_selector"
+            android:text="长按说话"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/chat_btn_voice"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/btn_chat_voice_selector" />
+
+        <Button
+            android:id="@+id/chat_btn_keyboard"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginLeft="6dp"
+            android:background="@drawable/btn_keyboard_selector"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/chat_btn_send"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/btn_send_selector"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#ffa1a1a1"
+        android:focusable="false" />
+
+    <LinearLayout
+        android:id="@+id/chat_layout_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone" >
+
+        <LinearLayout
+            android:id="@+id/chat_layout_emo"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:orientation="vertical"
+            android:visibility="gone" >
+
+            <android.support.v4.view.ViewPager
+                android:id="@+id/chat_pager_emo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <include
+            android:id="@+id/chat_layout_add"
+            layout="@layout/include_chat_add"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</LinearLayout>
