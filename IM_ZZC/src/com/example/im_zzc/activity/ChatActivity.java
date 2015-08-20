@@ -124,24 +124,10 @@ public class ChatActivity extends ActivityBase implements OnClickListener,
 	}
 
 	private void initView() {
-		initActionbar();
+		initTopBarForLeft(targetUser.getUsername());
 		initBottomView();
 		initXListView();
 		initVoiceView();
-	}
-
-	private void initActionbar() {
-		mHeaderLayout = (HeaderLayout) findViewById(R.id.chat_actionbar);
-		mHeaderLayout.init(HeaderStyle.TITLE_LEFT_IMAGEBUTTON);
-		mHeaderLayout.setTitleAndLeftImageButton(targetUser.getUsername(),
-				R.drawable.base_action_bar_back_bg_selector,
-				new onLeftImageButtonClickListener() {
-
-					@Override
-					public void onClick() {
-						startAnimActivity(MainActivity.class);
-					}
-				});
 	}
 
 	private void initBottomView() {
@@ -605,12 +591,23 @@ public class ChatActivity extends ActivityBase implements OnClickListener,
 			case BmobConstants.REQUESTCODE_TAKE_CAMERA:// 当取到值的时候才上传path路径下的图片到服务器
 				sendImageMessage(localCameraPath);
 				break;
+			case BmobConstants.REQUESTCODE_TAKE_LOCATION://发送位置
+				double latitude = data.getDoubleExtra("x", 0);
+				double longtitude = data.getDoubleExtra("y", 0);
+				String address = data.getStringExtra("address");
+				if (address != null && !address.equals("")) {
+					sendLocationMessage(address, latitude, longtitude);
+				} else {
+					showToast("address是空!");
+				}
+				break;
 			default:
 				break;
 			}
 
 		}
 	}
+
 
 	public class NewMessageBroadcastReceiver extends BroadcastReceiver {
 
@@ -737,11 +734,17 @@ public class ChatActivity extends ActivityBase implements OnClickListener,
 			selectImageFromLocal();
 			break;
 		case R.id.chat_add_tv_location:// 位置
-
+			selectLocationFromMap();
 			break;
 		default:
 			break;
 		}
+	}
+	
+	private void selectLocationFromMap() {
+		Intent intent=new Intent(this, LocationActivity.class);
+		intent.putExtra("type", "select");
+		startActivityForResult(intent, BmobConstants.REQUESTCODE_TAKE_LOCATION);
 	}
 
 	/**
@@ -801,6 +804,19 @@ public class ChatActivity extends ActivityBase implements OnClickListener,
 				mAdapter.notifyDataSetChanged();
 			}
 		});
+	}
+	
+
+	private void sendLocationMessage(String address, double latitude,
+			double longtitude) {
+		if (layout_more.getVisibility()==View.VISIBLE) {
+			layout_more.setVisibility(View.GONE);
+			layout_add.setVisibility(View.GONE);
+			layout_emo.setVisibility(View.GONE);
+		}
+		BmobMsg msg=BmobMsg.createLocationSendMsg(this, TargetId, address, latitude, longtitude);
+		manager.sendTextMessage(targetUser, msg);
+		refreshMessage(msg);
 	}
 
 	@Override
@@ -968,7 +984,6 @@ public class ChatActivity extends ActivityBase implements OnClickListener,
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		// TODO Auto-generated method stub
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (layout_more.getVisibility() == View.VISIBLE) {
 				layout_more.setVisibility(View.GONE);

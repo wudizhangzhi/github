@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -337,16 +338,18 @@ public class ContactFragment extends FragmentBase implements
 			long id) {
 		// TODO 这里position为什么是要-1
 		User user = (User) userAdapter.getItem(position-1);
+		Log.i("contact页面", "点击位置："+position);
 		// 进入好友信息页面
 //		Intent intent = new Intent(getActivity(), SetMyInfoActivity.class);
 //		intent.putExtra("from", "other");
 //		intent.putExtra("username", user.getUsername());
-		//TODO 测试进入聊天界面
-		Intent intent = new Intent(getActivity(), ChatActivity.class);
-		BmobChatUser chatuser=new BmobChatUser();
-		chatuser.setObjectId(user.getObjectId());
-		chatuser.setUsername(user.getUsername());
-		intent.putExtra("user", chatuser);
+		Intent intent = new Intent(getActivity(), SetMyInfoActivity.class);
+//		BmobChatUser chatuser=new BmobChatUser();
+//		chatuser.setObjectId(user.getObjectId());
+//		chatuser.setUsername(user.getUsername());
+//		chatuser.setAvatar(user.getAvatar());
+		intent.putExtra("from", "other");
+		intent.putExtra("username", user.getUsername());
 		startAnimActivity(intent);
 	}
 

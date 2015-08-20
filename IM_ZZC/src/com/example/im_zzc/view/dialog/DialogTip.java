@@ -5,7 +5,6 @@ import android.content.Context;
 import com.example.im_zzc.util.PixelUtil;
 
 public class DialogTip extends DialogBase {
-	Context mContext;
 
 	public DialogTip(Context context, String title, String message,
 			String positiveName, String negativeName, boolean iscancel) {

@@ -32,7 +32,7 @@ public class NewFriendActivity extends ActivityBase implements OnItemLongClickLi
 	}
 
 	private void init() {
-		
+		initTopBarForLeft("好友请求");
 		mListView =  (ListView) findViewById(R.id.newfriend_list_newfriend);
 
 		mAdapter = new NewFriendAdapter(this, BmobDB.create(this)

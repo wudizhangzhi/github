@@ -45,6 +45,7 @@ public class AddNewFriendActivity extends ActivityBase implements OnClickListene
 	}
 
 	private void initView() {
+		initTopBarForLeft("添加好友");
 		edt_search_name=(EditText) findViewById(R.id.addnewfriend_et_find_name);
 		bt_search=(Button) findViewById(R.id.addnewfriend_btn_search);
 		bt_search.setOnClickListener(this);

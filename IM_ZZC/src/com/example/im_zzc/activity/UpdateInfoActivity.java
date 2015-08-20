@@ -21,7 +21,7 @@ public class UpdateInfoActivity extends ActivityBase{
 
 	private void initView() {
 		edit_nick = (EditText) findViewById(R.id.edit_nick);
-		initTopBarForBoth("修改昵称", R.drawable.base_action_bar_back_bg_selector, new onRightImageButtonClickListener() {
+		initTopBarForBoth("修改昵称", R.drawable.base_action_bar_true_bg_selector, new onRightImageButtonClickListener() {
 			
 			@Override
 			public void onClick() {

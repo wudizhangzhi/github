@@ -9,6 +9,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -49,13 +50,15 @@ public class RecentFragment extends FragmentBase implements
 		super.onActivityCreated(savedInstanceState);
 		initView();
 	}
-
+	
+	
 	private void initView() {
+		initTopbarForOnlyTitle("会话");
+//		mHeaderLayout = (HeaderLayout) findViewById(R.id.common_actionbar);
+//		mHeaderLayout.setDefaultTitle("会话");
 		mClearEditText = (ClearEditText) findViewById(R.id.recent_edt_search);
-		mHeaderLayout = (HeaderLayout) findViewById(R.id.fragment_actionbar);
 		listview = (ListView) findViewById(R.id.recent_listview);
 
-		mHeaderLayout.setDefaultTitle("会话");
 
 		mAdapter = new MessageRecentAdapter(getActivity(),
 				R.layout.item_conversation, BmobDB.create(getActivity())
@@ -65,6 +68,15 @@ public class RecentFragment extends FragmentBase implements
 		listview.setOnItemClickListener(this);
 		listview.setOnItemLongClickListener(RecentFragment.this);
 		// edittext的监控
+//		mClearEditText.setCursorVisible(false);
+//		mClearEditText.setOnClickListener(new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				mClearEditText.requestFocus();
+//				mClearEditText.setCursorVisible(true);
+//			}
+//		});
 		mClearEditText.addTextChangedListener(new TextWatcher() {
 
 			@Override
@@ -93,7 +105,7 @@ public class RecentFragment extends FragmentBase implements
 			long id) {
 		final BmobRecent recent = mAdapter.getItem(position);
 		// 消除未读标记
-		// TODO 测试!!!!
+		// TODO 测试!!!!因为官方recent中头像为空，需要向服务器寻求数据
 		BmobDB.create(getActivity()).resetUnread(recent.getTargetid());
 		BmobUserManager.getInstance(getActivity()).queryUserById(
 				recent.getTargetid(), new FindListener<BmobChatUser>() {

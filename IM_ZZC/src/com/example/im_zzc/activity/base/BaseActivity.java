@@ -16,14 +16,17 @@ import cn.bmob.im.bean.BmobChatUser;
 import cn.bmob.im.config.BmobConfig;
 import cn.bmob.im.util.BmobLog;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.UpdateListener;
 
 import com.example.im_zzc.CustomApplication;
 import com.example.im_zzc.R;
 import com.example.im_zzc.activity.LoginActivity;
+import com.example.im_zzc.bean.User;
 import com.example.im_zzc.util.CollectionUtils;
 import com.example.im_zzc.view.HeaderLayout;
 import com.example.im_zzc.view.HeaderLayout.HeaderStyle;
 import com.example.im_zzc.view.HeaderLayout.onLeftImageButtonClickListener;
+import com.example.im_zzc.view.HeaderLayout.onRightImageButtonClickListener;
 import com.example.im_zzc.view.dialog.DialogTip;
 import com.example.im_zzc.view.dialog.DialogTip.onPositiveButtonClickListener;
 
@@ -31,7 +34,6 @@ public class BaseActivity extends FragmentActivity {
 	protected BmobUserManager userManager;
 	protected BmobChatManager manager;
 	protected CustomApplication mApplicaton;
-	// TODO actionbar的初始化方法
 	protected HeaderLayout mHeadLayout;
 
 	protected int mScreenWidth;
@@ -57,14 +59,13 @@ public class BaseActivity extends FragmentActivity {
 	 * 用于登陆或者自动登陆状态下用户资料以及好友资料的检测跟新
 	 */
 	public void updateUserInfo() {
-		// TODO 更新地理位置
+		//更新地理位置
+		updateUserLocation();
 		// 默认获取好友资料成功后保存到数据库中，并更新到本地内存
 		userManager.queryCurrentContactList(new FindListener<BmobChatUser>() {
 
 			@Override
 			public void onSuccess(List<BmobChatUser> arg0) {
-				Log.i("test", "mApplicaton:" + mApplicaton.toString()
-						+ ";size:" + mApplicaton.getContactList().size());
 				CustomApplication.getInstance().setContactList(
 						CollectionUtils.list2map(arg0));
 			}
@@ -79,6 +80,37 @@ public class BaseActivity extends FragmentActivity {
 			}
 		});
 	}
+	
+	/**
+	 * 更新位置信息
+	 */
+	private void updateUserLocation() {
+		if (CustomApplication.getInstance().mLastLocation!=null) {
+			//保存的位置
+			String saveLatitude=mApplicaton.getLatitude();
+			String saveLongtitude=mApplicaton.getLongitude();
+			//新的位置
+			String newLatitude=String.valueOf(CustomApplication.mLastLocation.getLatitude());
+			String newLongtitude=String.valueOf(CustomApplication.mLastLocation.getLongitude());
+			if (!saveLatitude.equals(newLatitude)||!saveLongtitude.equals(newLongtitude)) {//坐标有变化
+				final User user=userManager.getCurrentUser(User.class);
+				user.setLocation(CustomApplication.mLastLocation);
+				user.update(this, new UpdateListener(){
+
+					@Override
+					public void onFailure(int arg0, String arg1) {
+						showToast("更新位置失败："+arg1);
+					}
+
+					@Override
+					public void onSuccess() {
+						CustomApplication.getInstance().setLatitude(String.valueOf(user.getLocation().getLatitude()));
+						CustomApplication.getInstance().setLongtitude(String.valueOf(user.getLocation().getLongitude()));
+					}
+				} );
+			}
+		}
+	}
 
 	// 更新控件的方法
 	// 点击事件接口
@@ -90,13 +122,22 @@ public class BaseActivity extends FragmentActivity {
 	public void startAnimActivity(Intent intent) {
 		this.startActivity(intent);
 	}
-
+	
 	public void initTopBarForLeft(String title) {
 		mHeadLayout=(HeaderLayout) findViewById(R.id.common_actionbar);
 		mHeadLayout.init(HeaderStyle.TITLE_LEFT_IMAGEBUTTON);
 		mHeadLayout.setTitleAndLeftImageButton(title,
 				R.drawable.base_action_bar_back_bg_selector,
 				new OnLeftButtonClickListener());
+	}
+	
+	public void initTopBarForBoth(String title,int rightImageId,onRightImageButtonClickListener listen) {
+		mHeadLayout=(HeaderLayout) findViewById(R.id.common_actionbar);
+		mHeadLayout.init(HeaderStyle.TITLE_DOUBLE_IMAGEBUTTON);
+		mHeadLayout.setTitleAndLeftImageButton(title,
+				R.drawable.base_action_bar_back_bg_selector,
+				new OnLeftButtonClickListener());
+		mHeadLayout.setTitleAndRightImageButton(title, rightImageId, listen);
 	}
 	
 	/**
@@ -150,7 +191,6 @@ public class BaseActivity extends FragmentActivity {
 		BmobLog.i(text);
 	}
 
-	// TODO showOfflineDialog(),创建dialogBase.class
 	public void showOfflineDialog(Context context) {
 		final DialogTip dialog = new DialogTip(context, "您的账号已经在其他设备登陆！",
 				"重新登陆", false);

@@ -30,6 +30,10 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.BROADCAST_STICKY" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <!-- 来电消音 -->
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" >
+    </uses-permission>
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
     <!-- baidumap 所需的权限 -start -->
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.USE_CREDENTIALS" />
@@ -84,6 +88,7 @@
         <activity
             android:name=".activity.AddNewFriendActivity"
             android:windowSoftInputMode="adjustPan|stateAlwaysHidden" />
+        <activity android:name=".activity.BlackListActivity" />
         <activity android:name=".activity.ChatActivity" />
         <activity android:name=".activity.ImageBrowserActivity" />
         <activity android:name=".activity.LoginActivity" />
@@ -95,7 +100,23 @@
         <activity android:name=".activity.NewFriendActivity" />
         <activity android:name=".activity.RegisterActivity" />
         <activity android:name=".activity.SetMyInfoActivity" />
+        <activity android:name=".activity.UpdateInfoActivity" />
+        <activity android:name=".activity.LocationActivity" />
 
+        <!-- baidu map -->
+        <meta-data
+            android:name="com.baidu.lbsapi.API_KEY"
+            android:value="lNtxlBqcOvEcwgYhxbVWB7w4" />
+
+        <service
+            android:name="com.baidu.location.f"
+            android:enabled="true"
+            android:process=":remote" >
+            <intent-filter>
+                <action android:name="com.baidu.location.service_v2.2" >
+                </action>
+            </intent-filter>
+        </service>
         <!-- IM聊天所需的Push start -->
 
         <service

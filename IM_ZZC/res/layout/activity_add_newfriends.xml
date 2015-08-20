@@ -5,7 +5,7 @@
     android:orientation="vertical" >
 
     <include
-        android:id="@+id/addnewfriend_activity_actionbar"
+        android:id="@+id/common_actionbar"
         layout="@layout/include_action_bar" />
 
     <LinearLayout

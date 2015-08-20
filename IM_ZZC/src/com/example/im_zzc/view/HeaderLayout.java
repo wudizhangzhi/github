@@ -163,8 +163,8 @@ public class HeaderLayout extends LinearLayout {
 		if (mButtonRight != null && bacid > 0) {
 //			mButtonRight.setWidth(PixelUtil.dip2px(30));
 //			mButtonRight.setHeight(PixelUtil.dip2px(30));
-			mButtonRight.setWidth(PixelUtil.dip2px(30, mContext));
-			mButtonRight.setHeight(PixelUtil.dip2px(30, mContext));
+//			mButtonRight.setWidth(PixelUtil.dip2px(10, mContext));
+//			mButtonRight.setHeight(PixelUtil.dip2px(10, mContext));
 			mButtonRight.setBackgroundResource(bacid);
 			setOnRightImageButtonClickListener(listener);
 		}
@@ -175,8 +175,8 @@ public class HeaderLayout extends LinearLayout {
 		setDefaultTitle(text);
 		mLinearLayoutContainerRight.setVisibility(View.VISIBLE);
 		if (mButtonRight != null && bacid > 0) {
-			mButtonRight.setWidth(PixelUtil.dip2px(30, mContext));
-			mButtonRight.setHeight(PixelUtil.dip2px(30, mContext));
+//			mButtonRight.setWidth(PixelUtil.dip2px(45, mContext));
+//			mButtonRight.setHeight(PixelUtil.dip2px(40, mContext));
 			mButtonRight.setText(text);
 			mButtonRight.setBackgroundResource(bacid);
 			setOnRightImageButtonClickListener(listener);
@@ -196,7 +196,7 @@ public class HeaderLayout extends LinearLayout {
 	public interface onRightImageButtonClickListener {
 		void onClick();
 	}
-
+	
 	public void setOnLeftImageButtonClickListener(
 			onLeftImageButtonClickListener listener) {
 		this.mLeftImageButtonClickListener = listener;
@@ -207,4 +207,11 @@ public class HeaderLayout extends LinearLayout {
 		this.mRightImageButtonClickListener = listener;
 	}
 
+	public Button getRightImageButton(){
+		if (mButtonRight!=null) {
+			return mButtonRight;
+		}
+		return null;
+	}
+	
 }

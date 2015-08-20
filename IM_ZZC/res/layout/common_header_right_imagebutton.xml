@@ -6,21 +6,20 @@
     android:id="@+id/header_layout_buttonlayout_right"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
     android:clickable="true"
     android:focusable="true"
     android:gravity="center"
+    android:orientation="horizontal"
     android:padding="6dp" >
 
     <Button
         android:id="@+id/header_bt_button_right"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="#00000000"
-        android:clickable="false"
-        android:focusable="false"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
-        android:scaleType="centerInside" />
+        android:background="#00000000"
+        android:clickable="false"
+        android:focusable="false" />
 
 </LinearLayout>

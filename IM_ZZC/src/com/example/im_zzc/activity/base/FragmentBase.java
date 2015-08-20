@@ -100,7 +100,7 @@ public class FragmentBase extends Fragment {
 	// 初始化设置headerlayout的方法，因为外面xml中用的include，所以需要调用这个方法
 	// TODO 待优化
 	public void initTopbarForOnlyTitle(String title) {
-		mHeaderLayout = (HeaderLayout) findViewById(R.id.fragment_actionbar);
+		mHeaderLayout = (HeaderLayout) findViewById(R.id.common_actionbar);
 		mHeaderLayout.init(HeaderStyle.DEFAULT_TITLE);
 		mHeaderLayout.setDefaultTitle(title);
 	}
@@ -108,7 +108,7 @@ public class FragmentBase extends Fragment {
 	public void initTopbarForBoth(String title, int leftId, int rightId,
 			onLeftImageButtonClickListener leftlistener,
 			onRightImageButtonClickListener rightlistener) {
-		mHeaderLayout = (HeaderLayout) findViewById(R.id.fragment_actionbar);
+		mHeaderLayout = (HeaderLayout) findViewById(R.id.common_actionbar);
 		mHeaderLayout.init(HeaderStyle.TITLE_DOUBLE_IMAGEBUTTON);
 		mHeaderLayout.setTitleAndLeftImageButton(title, leftId, leftlistener);
 		mHeaderLayout.setTitleAndRightImageButton(title, rightId, title,
@@ -117,7 +117,7 @@ public class FragmentBase extends Fragment {
 
 	public void initTopbarForRight(String title, int rightId,
 			onRightImageButtonClickListener rightlistener) {
-		mHeaderLayout = (HeaderLayout) findViewById(R.id.fragment_actionbar);
+		mHeaderLayout = (HeaderLayout) findViewById(R.id.common_actionbar);
 		mHeaderLayout.init(HeaderStyle.TITLE_RIGHT_IMAGEBUTTON);
 		mHeaderLayout
 				.setTitleAndRightImageButton(title, rightId, rightlistener);
@@ -125,7 +125,7 @@ public class FragmentBase extends Fragment {
 
 	public void initTopbarForLeft(String title, int leftId,
 			onLeftImageButtonClickListener leftlistener) {
-		mHeaderLayout = (HeaderLayout) findViewById(R.id.fragment_actionbar);
+		mHeaderLayout = (HeaderLayout) findViewById(R.id.common_actionbar);
 		mHeaderLayout.init(HeaderStyle.TITLE_LEFT_IMAGEBUTTON);
 		mHeaderLayout.setTitleAndLeftImageButton(title, leftId, leftlistener);
 	}

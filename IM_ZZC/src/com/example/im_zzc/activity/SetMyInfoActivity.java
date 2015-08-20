@@ -8,10 +8,12 @@ import java.util.List;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.session.PlaybackState.CustomAction;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,25 +31,33 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import cn.bmob.im.BmobChatManager;
 import cn.bmob.im.bean.BmobChatUser;
 import cn.bmob.im.config.BmobConfig;
 import cn.bmob.im.db.BmobDB;
+import cn.bmob.im.inteface.MsgTag;
 import cn.bmob.im.util.BmobLog;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.listener.FindListener;
+import cn.bmob.v3.listener.PushListener;
 import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadFileListener;
 
+import com.example.im_zzc.CustomApplication;
 import com.example.im_zzc.R;
 import com.example.im_zzc.activity.base.ActivityBase;
 import com.example.im_zzc.bean.User;
 import com.example.im_zzc.config.BmobConstants;
+import com.example.im_zzc.util.CollectionUtils;
 import com.example.im_zzc.util.ImageLoadOptions;
 import com.example.im_zzc.util.PhotoUtil;
 import com.example.im_zzc.view.HeaderLayout;
 import com.example.im_zzc.view.HeaderLayout.onLeftImageButtonClickListener;
+import com.example.im_zzc.view.dialog.DialogTip;
+import com.example.im_zzc.view.dialog.DialogTip.onPositiveButtonClickListener;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -59,7 +69,7 @@ public class SetMyInfoActivity extends ActivityBase implements OnClickListener {
 	private Button btn_chat, btn_black, btn_add_friend;
 	private RelativeLayout layout_head, layout_nick, layout_gender,
 			layout_black_tips;
-
+	//用户信息
 	private String from;
 	private String username;
 	private User user;
@@ -158,14 +168,14 @@ public class SetMyInfoActivity extends ActivityBase implements OnClickListener {
 
 			@Override
 			public void onError(int arg0, String arg1) {
-				
+
 			}
 
 			@Override
 			public void onSuccess(List<User> list) {
 				if (list.size() > 0 && list != null) {
 					user = list.get(0);
-					Log.i("initOtherData", "userAvarar:"+user.getAvatar());
+					Log.i("initOtherData", "userAvarar:" + user.getAvatar());
 					btn_add_friend.setEnabled(true);
 					btn_chat.setEnabled(true);
 					btn_black.setEnabled(true);
@@ -176,7 +186,8 @@ public class SetMyInfoActivity extends ActivityBase implements OnClickListener {
 	}
 
 	private void updateUser(User user) {
-		Log.i("updateUser", "用户名："+user.getUsername()+"；头像"+user.getAvatar());
+		Log.i("updateUser",
+				"用户名：" + user.getUsername() + "；头像" + user.getAvatar());
 		refreshAvatar(user.getAvatar());
 		tv_set_name.setText(user.getUsername());
 		tv_set_nick.setText(user.getNick());
@@ -194,7 +205,7 @@ public class SetMyInfoActivity extends ActivityBase implements OnClickListener {
 	}
 
 	private void refreshAvatar(String avatar) {
-		Log.i("刷新头像", user.getUsername()+"头像:"+user.getAvatar());
+		Log.i("刷新头像", user.getUsername() + "头像:" + user.getAvatar());
 		if (avatar != null && !avatar.equals("")) {
 			ImageLoader.getInstance().displayImage(avatar, iv_set_avatar,
 					ImageLoadOptions.getOptions());
@@ -210,55 +221,108 @@ public class SetMyInfoActivity extends ActivityBase implements OnClickListener {
 			showAvatarPop();
 			break;
 		case R.id.setinfo_layout_nick:
-		
+			startAnimActivity(UpdateInfoActivity.class);
 			break;
 		case R.id.setinfo_layout_gender:
 			showSexChooseDialog();
 			break;
 		case R.id.setinfo_btn_chat:
-
+			Intent intent = new Intent(this, ChatActivity.class);
+			intent.putExtra("user", user);
+			startAnimActivity(intent);
+			finish();
 			break;
 		case R.id.setinfo_btn_add_friend:
-			
+			addFriend();
 			break;
 		case R.id.setinfo_btn_black:
-			//TODO 测试!!!!!!!!!!!!!!!!
-			Log.i("点击黑名单", "点击黑名单");
-			String test2=user.getAvatar();
-			ImageLoader.getInstance().displayImage(test2, iv_set_avatar, ImageLoadOptions.getOptions());
+			showBlackDialog(username);
 			break;
 
 		default:
 			break;
 		}
 	}
-	
-	String[] sexs = new String[]{ "男", "女" };
+
+	private void showBlackDialog(final String username) {
+		DialogTip dialog = new DialogTip(this, "删除好友", "你确定要将好友加入黑名单吗？", "确定",
+				"取消", true);
+		dialog.setOnPositiveButtonClickListener(new onPositiveButtonClickListener() {
+			@Override
+			public void onClick() {
+				userManager.addBlack(username, new UpdateListener() {
+
+					@Override
+					public void onSuccess() {
+						showToast("加入黑名单成功!");
+						btn_black.setVisibility(View.GONE);
+						layout_black_tips.setVisibility(View.VISIBLE);
+						CustomApplication.getInstance().setContactList(
+								CollectionUtils.list2map(BmobDB.create(
+										SetMyInfoActivity.this)
+										.getContactList()));
+					}
+
+					@Override
+					public void onFailure(int arg0, String arg1) {
+						showToast("加入黑名单失败:" + arg1);
+					}
+				});
+			}
+		});
+		dialog.show();
+		dialog = null;
+	}
+
+	private void addFriend() {
+		final ProgressDialog progress = new ProgressDialog(this);
+		progress.setCanceledOnTouchOutside(false);
+		progress.setMessage("发送好友请求中...");
+		progress.show();
+		BmobChatManager.getInstance(this).sendTagMessage(MsgTag.ADD_CONTACT,
+				user.getObjectId(), new PushListener() {
+
+					@Override
+					public void onSuccess() {
+						progress.dismiss();
+						showToast("好友请求发送成功");
+
+					}
+
+					@Override
+					public void onFailure(int arg0, String arg1) {
+						progress.dismiss();
+						showToast("好友请求发送失败：" + arg1);
+					}
+				});
+	}
+
+	String[] sexs = new String[] { "男", "女" };
+
 	private void showSexChooseDialog() {
 		new AlertDialog.Builder(this)
-		.setTitle("性别")
-		.setIcon(android.R.drawable.ic_dialog_info)
-		.setSingleChoiceItems(sexs, 0,
-				new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog,
-							int which) {
-						updateInfo(which);
-						dialog.dismiss();
-					}
-				})
-		.setNegativeButton("取消", null)
-		.show();
+				.setTitle("性别")
+				.setIcon(android.R.drawable.ic_dialog_info)
+				.setSingleChoiceItems(sexs, 0,
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog,
+									int which) {
+								updateInfo(which);
+								dialog.dismiss();
+							}
+						}).setNegativeButton("取消", null).show();
 	}
-	
+
 	/**
 	 * 更新性别
+	 * 
 	 * @param which
 	 */
 	private void updateInfo(int which) {
 		final User user = userManager.getCurrentUser(User.class);
-		if(which==0){
+		if (which == 0) {
 			user.setSex(true);
-		}else{
+		} else {
 			user.setSex(false);
 		}
 		user.update(this, new UpdateListener() {
@@ -315,7 +379,7 @@ public class SetMyInfoActivity extends ActivityBase implements OnClickListener {
 						BmobConstants.REQUESTCODE_UPLOADAVATAR_CAMERA);
 			}
 		});
-		//本地选取
+		// 本地选取
 		layout_choose.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -363,7 +427,6 @@ public class SetMyInfoActivity extends ActivityBase implements OnClickListener {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent intent) {
-		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, intent);
 		switch (requestCode) {
 		case BmobConstants.REQUESTCODE_UPLOADAVATAR_CAMERA:// 拍照修改头像
@@ -427,22 +490,22 @@ public class SetMyInfoActivity extends ActivityBase implements OnClickListener {
 			@Override
 			public void onSuccess() {
 				String url = bmobfile.getFileUrl();
-				Log.i("uploadAvatar", "上传文件成功:"+bmobfile.getFilename()+"；地址："+url);
+				Log.i("uploadAvatar", "上传文件成功:" + bmobfile.getFilename()
+						+ "；地址：" + url);
 				updateUserAvatar(url);
 			}
 
 			@Override
 			public void onProgress(Integer arg0) {
-				
+
 			}
-			
+
 			@Override
 			public void onFailure(int arg0, String arg1) {
 				showToast("上传头像失败：" + arg1);
 			}
 		});
 	}
-
 
 	/**
 	 * 头像处理
@@ -484,7 +547,7 @@ public class SetMyInfoActivity extends ActivityBase implements OnClickListener {
 	String path = "";
 
 	private void saveCropAvator(Intent intent) {
-		
+
 		Bundle extras = intent.getExtras();
 		if (extras != null) {
 			Bitmap bitmap = extras.getParcelable("data");
@@ -499,22 +562,23 @@ public class SetMyInfoActivity extends ActivityBase implements OnClickListener {
 				iv_set_avatar.setImageBitmap(bitmap);
 
 				String filename = new SimpleDateFormat("yyMMddHHmmss")
-						.format(new Date())+".png";
+						.format(new Date()) + ".png";
 				// path=Environment.getExternalStorageDirectory()+"/BmobChat/Avatar/";
 				path = BmobConstants.BMOB_AVATAR_PATH + filename;
-				Log.i("saveCropAvator", "保存:"+path);
-				
-				PhotoUtil.saveBitMap(BmobConstants.BMOB_AVATAR_PATH, filename, bitmap, true);
+				Log.i("saveCropAvator", "保存:" + path);
+
+				PhotoUtil.saveBitMap(BmobConstants.BMOB_AVATAR_PATH, filename,
+						bitmap, true);
 				if (bitmap != null && bitmap.isRecycled()) {
 					bitmap.recycle();
 				}
 			}
 		}
 	}
-	
+
 	private void updateUserAvatar(final String url) {
-		Log.i("updateUserAvatar", "更新用户头像信息:"+url);
-		User user = (User)userManager.getCurrentUser(User.class);
+		Log.i("updateUserAvatar", "更新用户头像信息:" + url);
+		User user = (User) userManager.getCurrentUser(User.class);
 		user.setAvatar(url);
 		user.update(this, new UpdateListener() {
 
@@ -527,7 +591,7 @@ public class SetMyInfoActivity extends ActivityBase implements OnClickListener {
 			public void onSuccess() {
 				showToast("上传成功");
 				refreshAvatar(url);
-//				initMeData();
+				// initMeData();
 			}
 		});
 	}

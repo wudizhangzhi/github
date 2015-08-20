@@ -1,7 +1,6 @@
 package com.example.im_zzc.adapter;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -9,33 +8,32 @@ import java.util.List;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.sax.StartElementListener;
 import android.text.SpannableString;
-import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
-import cn.bmob.im.BmobChatManager;
 import cn.bmob.im.BmobDownloadManager;
 import cn.bmob.im.BmobUserManager;
 import cn.bmob.im.bean.BmobChatUser;
 import cn.bmob.im.bean.BmobMsg;
 import cn.bmob.im.config.BmobConfig;
-import cn.bmob.im.db.BmobDB;
 import cn.bmob.im.inteface.DownloadListener;
-import cn.bmob.v3.listener.FindListener;
 
 import com.example.im_zzc.R;
 import com.example.im_zzc.activity.ImageBrowserActivity;
+import com.example.im_zzc.activity.LocationActivity;
 import com.example.im_zzc.activity.SetMyInfoActivity;
 import com.example.im_zzc.adapter.base.BaseListAdapter;
 import com.example.im_zzc.adapter.base.ViewHolder;
-import com.example.im_zzc.bean.User;
 import com.example.im_zzc.util.FaceTextUtil;
 import com.example.im_zzc.util.ImageLoadOptions;
 import com.example.im_zzc.util.TimeUtil;
@@ -64,9 +62,12 @@ public class MessageChatAdapter extends BaseListAdapter<BmobMsg> {
 	//
 	private BmobChatUser currentUser;
 	private String currentUserObjectId = "";
-	
+	//图片设置
 	DisplayImageOptions Options;
 	private AnimateFirstDisplayListener animateFirstDisplayListener = new AnimateFirstDisplayListener();
+	//声音对话框最大、最小长度
+	private int maxWidth;
+	private int minWidth;
 
 	public MessageChatAdapter(Context context, List<BmobMsg> list,BmobChatUser target,BmobChatUser user) {
 		super(context, list,target,user);
@@ -74,6 +75,12 @@ public class MessageChatAdapter extends BaseListAdapter<BmobMsg> {
 		// this.list = list;
 		// mInflater = LayoutInflater.from(context);
 //		currentUser=BmobUserManager.getInstance(mContext).getCurrentUser(User.class);
+		WindowManager wm=(WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+		DisplayMetrics outMetrics=new DisplayMetrics();
+		wm.getDefaultDisplay().getMetrics(outMetrics);
+		maxWidth=(int) (outMetrics.widthPixels*0.7f);
+		minWidth=(int) (outMetrics.widthPixels*0.15f);
+		
 		currentUser=user;
 		currentUserObjectId = BmobUserManager.getInstance(mContext)
 				.getCurrentUserObjectId();
@@ -137,6 +144,7 @@ public class MessageChatAdapter extends BaseListAdapter<BmobMsg> {
 		ImageView iv_picture = ViewHolder.get(convertView,
 				R.id.item_chat_iv_picture);
 		// 语音
+		final LinearLayout ll_voice_dialog=ViewHolder.get(convertView,R.id.item_chat_layout_voice);
 		final ImageView iv_voice = ViewHolder.get(convertView,
 				R.id.item_chat_iv_voice);
 		final TextView tv_voice_length = ViewHolder.get(convertView,
@@ -230,12 +238,12 @@ public class MessageChatAdapter extends BaseListAdapter<BmobMsg> {
 		// 根据类型显示内容
 		String content = item.getContent();
 		switch (item.getMsgType()) {
-		case BmobConfig.TYPE_TEXT:
+		case BmobConfig.TYPE_TEXT://文字
 			SpannableString spannableString = FaceTextUtil.toSpannableString(
 					mContext, content);
 			tv_msg.setText(spannableString);
 			break;
-		case BmobConfig.TYPE_IMAGE:
+		case BmobConfig.TYPE_IMAGE://图片
 			if (content != "" && !content.equals("")) {
 				dealWithImage(item, iv_picture, iv_fail_resend, tv_send_status,
 						progress_load, position);
@@ -254,29 +262,38 @@ public class MessageChatAdapter extends BaseListAdapter<BmobMsg> {
 				}
 			});
 			break;
-		case BmobConfig.TYPE_LOCATION:
+		case BmobConfig.TYPE_LOCATION://位置
 			if (content != "" && !content.equals("")) {
 				String adress = content.split("&")[0];
-				String latitude = content.split("&")[1];// 纬度
-				String longtitude = content.split("&")[2];// 经度
+				final String latitude = content.split("&")[1];// 纬度
+				final String longitude = content.split("&")[2];// 经度
 				tv_location.setText(adress);
 				tv_location.setOnClickListener(new OnClickListener() {
 
 					@Override
 					public void onClick(View v) {
 						// TODO 传入数据进入地图页
-
+						Intent intent=new Intent(mContext,LocationActivity.class);
+						intent.putExtra("type", "scan");
+						intent.putExtra("latitude", Double.parseDouble(latitude));
+						intent.putExtra("longtitude", Double.parseDouble(longitude));
+						mContext.startActivity(intent);
 					}
 				});
 			}
 			break;
-		case BmobConfig.TYPE_VOICE:
+		case BmobConfig.TYPE_VOICE://声音
 			if (content != "" && !content.equals("")) {
 				if (item.getBelongId().equals(currentUserObjectId)) {// 发送的消息
 					if (item.getStatus() == BmobConfig.STATUS_SEND_RECEIVERED
 							|| item.getStatus() == BmobConfig.STATUS_SEND_SUCCESS) {// 发送成功或者收到
-						String length = content.split("&")[2];
+						 String length = content.split("&")[2];
 						tv_voice_length.setText(length + "\''");
+						//TODO 设置对话框长度,有没有更简洁的方法，这里重复
+						RelativeLayout.LayoutParams params= (LayoutParams) ll_voice_dialog.getLayoutParams();
+						float scale=Integer.parseInt(length)/60.0f;
+						params.width=(int) (minWidth+maxWidth*scale);
+//						ll_voice_dialog.setLayoutParams(params);
 					}
 				} else {// 收到的消息
 					boolean isExists = BmobDownloadManager
@@ -306,6 +323,10 @@ public class MessageChatAdapter extends BaseListAdapter<BmobMsg> {
 										iv_voice.setVisibility(View.INVISIBLE);
 										progress_load
 												.setVisibility(View.VISIBLE);
+										//TODO 设置对话框长度,有没有更简洁的方法，这里重复
+										RelativeLayout.LayoutParams params=(LayoutParams) ll_voice_dialog.getLayoutParams();
+										float scale=Integer.parseInt(length)/60.0f;
+										params.width=(int) (minWidth+maxWidth*scale);
 									}
 
 									@Override
@@ -320,8 +341,14 @@ public class MessageChatAdapter extends BaseListAdapter<BmobMsg> {
 					} else {// 已经下载
 						String length = content.split("&")[2];
 						tv_voice_length.setText(length + "\''");
+						//TODO 设置对话框长度,有没有更简洁的方法，这里重复
+						RelativeLayout.LayoutParams params=(LayoutParams) ll_voice_dialog.getLayoutParams();
+						float scale=Integer.parseInt(length)/60.0f;
+						params.width=(int) (minWidth+maxWidth*scale);
 					}
 				}
+				
+//				ll_voice_dialog.setLayoutParams(params);
 				// 播放语音文件监听
 				iv_voice.setOnClickListener(new NewRecordPlayClickListener(
 						mContext, item, iv_voice));

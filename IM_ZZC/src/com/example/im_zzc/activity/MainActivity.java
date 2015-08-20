@@ -46,8 +46,11 @@ public class MainActivity extends ActivityBase implements EventListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		// 开启定时检测
+		//TODO 开启定时检测,不知道用处
+		BmobChat.getInstance(this).startPollService(30);
 		// 开启消息接收器
+		initNewTagReceiver();
+		initNewMessageReceiver();
 		initView();
 		initTabFragment();
 	}
@@ -79,7 +82,7 @@ public class MainActivity extends ActivityBase implements EventListener {
 				.add(R.id.main_fragment_container, contactFragment)
 				.hide(contactFragment).show(recentFragment).commit();
 	}
-
+	
 	/**
 	 * 底部3个按钮点击事件
 	 * @param view
@@ -254,7 +257,10 @@ public class MainActivity extends ActivityBase implements EventListener {
 	NewTagReceiver tagReceiver;
 
 	public void initNewTagReceiver() {
-
+		tagReceiver=new NewTagReceiver();
+		IntentFilter filter=new IntentFilter(BmobConfig.BROADCAST_ADD_USER_MESSAGE);
+		filter.setPriority(3);
+		registerReceiver(tagReceiver, filter);
 	}
 
 	// 标签消息接收器

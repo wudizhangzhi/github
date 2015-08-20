@@ -27,6 +27,7 @@
                 android:paddingTop="7dip"
                 android:scaleType="matrix"
                 android:text="会话"
+                android:textColor="@drawable/tab_textcolor"
                 android:textSize="12sp" />
 
             <ImageView
@@ -60,6 +61,7 @@
                 android:paddingTop="7dip"
                 android:scaleType="matrix"
                 android:text="联系人"
+                android:textColor="@drawable/tab_textcolor"
                 android:textSize="12sp" />
 
             <ImageView
@@ -90,6 +92,7 @@
             android:paddingTop="7dip"
             android:scaleType="matrix"
             android:text="设置"
+            android:textColor="@drawable/tab_textcolor"
             android:textSize="12sp" />
     </LinearLayout>
 

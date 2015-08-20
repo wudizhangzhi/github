@@ -17,7 +17,7 @@ import com.example.im_zzc.R;
 
  //TODO 很多地方不明白
 public abstract class DialogBase extends Dialog {
-	private Context mContext;
+	protected Context mContext;
 
 	private boolean hasTitle = true;
 	private boolean isFullScreen = false;
@@ -36,9 +36,7 @@ public abstract class DialogBase extends Dialog {
 	private static final int MATCH_PARENT = android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 	public DialogBase(Context context) {
-		super(context);
-		// TODO dialog的style
-		// super(context,R.style.alert);
+		 super(context,R.style.alert);
 		mContext = context;
 	}
 
@@ -72,10 +70,12 @@ public abstract class DialogBase extends Dialog {
 		}
 		tv_message.setText(getMessage());
 		// 判断是否有插入的view
-		if (view == null) {
+		if (view!= null) {
 			FrameLayout custompanel = (FrameLayout) findViewById(R.id.dialogbase_fl_customPanel);
 			custompanel.addView(view, MATCH_PARENT, MATCH_PARENT);
 			custompanel.setVisibility(View.VISIBLE);
+			findViewById(R.id.dialogbase_ll_contentPanel).setVisibility(
+					View.GONE);
 		} else {
 			findViewById(R.id.dialogbase_fl_customPanel).setVisibility(
 					View.GONE);
