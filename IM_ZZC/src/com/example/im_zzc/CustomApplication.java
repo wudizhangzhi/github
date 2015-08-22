@@ -65,7 +65,7 @@ public class CustomApplication extends Application {
 
 	private void initBaidu() {
 		// 初始化地图sdk
-		SDKInitializer.initialize(this);
+		SDKInitializer.initialize(getApplicationContext());
 		// 初始化定位sdk
 		initBaiduLocClient();
 	}

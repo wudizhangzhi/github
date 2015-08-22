@@ -734,7 +734,9 @@ public class ChatActivity extends ActivityBase implements OnClickListener,
 			selectImageFromLocal();
 			break;
 		case R.id.chat_add_tv_location:// 位置
-			selectLocationFromMap();
+			//TODO 包找不到！！！
+			showToast("尚未完成，敬请期待");
+//			selectLocationFromMap();
 			break;
 		default:
 			break;

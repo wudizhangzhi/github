@@ -3,11 +3,13 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
-	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
 	<classpathentry kind="lib" path="G:/workplace/bmob-android-im-sdk/Bmob_IM_V1.1.2_Demo/libs/universal-image-loader-1.9.2_sources.jar"/>
 	<classpathentry kind="lib" path="libs/bmobim_v1.1.2beta.jar"/>
 	<classpathentry kind="lib" path="libs/bmobsdk_v3.2.3_0919.jar"/>
 	<classpathentry kind="lib" path="libs/JSON-java-master.zip"/>
+	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
+	<classpathentry kind="lib" path="G:/工具/java_workplace/IM_ZZC/libs/baidumapapi_v3_0_0.jar"/>
+	<classpathentry combineaccessrules="false" exported="true" kind="src" path="/Copy of BDIntegrationSDK_LibProject"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>
