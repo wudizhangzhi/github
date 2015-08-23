@@ -137,7 +137,7 @@ public class SetMyInfoActivity extends ActivityBase implements OnClickListener {
 			btn_chat.setOnClickListener(this);
 			if (from.equals("add")) {// 从添加好友请求进入
 				// 从附近的人列表添加好友--因为获取附近的人的方法里面有是否显示好友的情况，因此在这里需要判断下这个用户是否是自己的好友
-				if (mApplicaton.getContactList().containsKey("username")) {// 是自己的好友
+				if (mApplication.getContactList().containsKey("username")) {// 是自己的好友
 					btn_black.setVisibility(View.VISIBLE);
 					btn_black.setOnClickListener(this);
 				} else {// 陌生人

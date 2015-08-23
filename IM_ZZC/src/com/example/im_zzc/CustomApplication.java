@@ -15,6 +15,7 @@ import cn.bmob.im.BmobChat;
 import cn.bmob.im.BmobUserManager;
 import cn.bmob.im.bean.BmobChatUser;
 import cn.bmob.im.db.BmobDB;
+import cn.bmob.im.util.BmobLog;
 import cn.bmob.v3.datatype.BmobGeoPoint;
 
 import com.baidu.location.BDLocation;
@@ -86,6 +87,12 @@ public class CustomApplication extends Application {
 
 		@Override
 		public void onReceiveLocation(BDLocation location) {
+			if (location==null) {
+				Log.i("customapplicaiton", location+"是空");
+			}else {
+				Log.i("customapplicaiton", location.getLatitude()+";"+location.getLongitude());
+			}
+				
 			double latitude = location.getLatitude();// 经度
 			double longtitude = location.getLongitude();// 纬度
 			if (mLastLocation != null) {

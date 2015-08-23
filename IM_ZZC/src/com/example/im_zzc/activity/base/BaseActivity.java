@@ -33,7 +33,7 @@ import com.example.im_zzc.view.dialog.DialogTip.onPositiveButtonClickListener;
 public class BaseActivity extends FragmentActivity {
 	protected BmobUserManager userManager;
 	protected BmobChatManager manager;
-	protected CustomApplication mApplicaton;
+	protected CustomApplication mApplication;
 	protected HeaderLayout mHeadLayout;
 
 	protected int mScreenWidth;
@@ -45,7 +45,7 @@ public class BaseActivity extends FragmentActivity {
 		// 获取BmobUserManager,BmobChatManager,Application,屏幕尺寸
 		userManager = BmobUserManager.getInstance(this);
 		manager = BmobChatManager.getInstance(this);
-		mApplicaton = CustomApplication.getInstance();
+		mApplication = CustomApplication.getInstance();
 		DisplayMetrics outMetrics = new DisplayMetrics();
 		// WindowManager wm=(WindowManager)
 		// getSystemService(Context.WINDOW_SERVICE);
@@ -84,11 +84,11 @@ public class BaseActivity extends FragmentActivity {
 	/**
 	 * 更新位置信息
 	 */
-	private void updateUserLocation() {
+	public  void updateUserLocation() {
 		if (CustomApplication.getInstance().mLastLocation!=null) {
 			//保存的位置
-			String saveLatitude=mApplicaton.getLatitude();
-			String saveLongtitude=mApplicaton.getLongitude();
+			String saveLatitude=mApplication.getLatitude();
+			String saveLongtitude=mApplication.getLongitude();
 			//新的位置
 			String newLatitude=String.valueOf(CustomApplication.mLastLocation.getLatitude());
 			String newLongtitude=String.valueOf(CustomApplication.mLastLocation.getLongitude());
@@ -104,6 +104,7 @@ public class BaseActivity extends FragmentActivity {
 
 					@Override
 					public void onSuccess() {
+						Log.i("baseactivity", "上传位置成功");
 						CustomApplication.getInstance().setLatitude(String.valueOf(user.getLocation().getLatitude()));
 						CustomApplication.getInstance().setLongtitude(String.valueOf(user.getLocation().getLongitude()));
 					}

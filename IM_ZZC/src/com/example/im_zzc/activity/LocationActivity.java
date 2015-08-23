@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import cn.bmob.im.util.BmobLog;
+import cn.bmob.v3.datatype.BmobGeoPoint;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
@@ -30,12 +31,14 @@ import com.baidu.mapapi.search.geocode.GeoCoder;
 import com.baidu.mapapi.search.geocode.OnGetGeoCoderResultListener;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeOption;
 import com.baidu.mapapi.search.geocode.ReverseGeoCodeResult;
+import com.example.im_zzc.CustomApplication;
 import com.example.im_zzc.R;
 import com.example.im_zzc.activity.base.BaseActivity;
 import com.example.im_zzc.view.HeaderLayout.onRightImageButtonClickListener;
 
 public class LocationActivity extends BaseActivity implements
 		OnGetGeoCoderResultListener {
+	
 	MapView mMapView;
 	BaiduMap mBaiduMap;
 	// 定位相关
@@ -139,7 +142,7 @@ public class LocationActivity extends BaseActivity implements
 			setResult(RESULT_OK, intent);
 			this.finish();
 		} else {
-			showToast("!");
+			showToast("位置为空!");
 		}
 	}
 
@@ -164,29 +167,32 @@ public class LocationActivity extends BaseActivity implements
 				}
 			}
 			lastLocation = location;
-
+			//TODO 测试上传位置！
+			CustomApplication.getInstance().mLastLocation=new BmobGeoPoint(location.getLongitude(),location.getLatitude());
+			updateUserLocation();
+			
 			BmobLog.i("lontitude = " + location.getLongitude() + ",latitude = "
 					+ location.getLatitude() + ",地址 = "
 					+ lastLocation.getAddrStr());
-
-			MyLocationData locData = new MyLocationData.Builder()
-					.accuracy(location.getRadius())
-					// 此处设置开发者获取到的方向信息，顺时针0-360
-					.direction(100).latitude(location.getLatitude())
-					.longitude(location.getLongitude()).build();
-			mBaiduMap.setMyLocationData(locData);
-			LatLng ll = new LatLng(location.getLatitude(),
-					location.getLongitude());
-			String address = location.getAddrStr();
-			if (address != null && !address.equals("")) {
-				lastLocation.setAddrStr(address);
-			} else {
-				// 反Geo搜索
-				mSearch.reverseGeoCode(new ReverseGeoCodeOption().location(ll));
-			}
-			// 显示在地图上
-			MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);
-			mBaiduMap.animateMapStatus(u);
+			
+//			MyLocationData locData = new MyLocationData.Builder()
+//					.accuracy(location.getRadius())
+//					// 此处设置开发者获取到的方向信息，顺时针0-360
+//					.direction(100).latitude(location.getLatitude())
+//					.longitude(location.getLongitude()).build();
+//			mBaiduMap.setMyLocationData(locData);
+//			LatLng ll = new LatLng(location.getLatitude(),
+//					location.getLongitude());
+//			String address = location.getAddrStr();
+//			if (address != null && !address.equals("")) {
+//				lastLocation.setAddrStr(address);
+//			} else {
+//				// 反Geo搜索
+//				mSearch.reverseGeoCode(new ReverseGeoCodeOption().location(ll));
+//			}
+			// TODO 显示在地图上
+//			MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);
+//			mBaiduMap.animateMapStatus(u);
 			// 设置按钮可点击
 			mHeadLayout.getRightImageButton().setEnabled(true);
 		}

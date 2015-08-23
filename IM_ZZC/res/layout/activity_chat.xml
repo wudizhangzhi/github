@@ -40,8 +40,7 @@
                 android:id="@+id/chat_iv_record"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
-                android:layout_centerHorizontal="true"
-                android:background="@drawable/chat_icon_voice1" />
+                android:layout_centerHorizontal="true" />
 
             <TextView
                 android:id="@+id/chat_tv_redord_tip"

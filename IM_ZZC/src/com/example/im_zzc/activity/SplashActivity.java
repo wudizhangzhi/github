@@ -8,6 +8,10 @@ import android.media.session.PlaybackState.CustomAction;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.ScaleAnimation;
+import android.widget.ImageView;
 import cn.bmob.im.BmobChat;
 import cn.bmob.im.bean.BmobChatUser;
 
@@ -23,12 +27,9 @@ import com.example.im_zzc.config.config;
 public class SplashActivity extends BaseActivity {
 	private LocationClient mLocationClient;
 	private BaiduReceicer mReceiver;
-	// TODO
-	// 连接后台，设置后台id
-	// 检查用户登陆,yes->获取好友列表，主界面；no->登陆界面
-	// init设置
-	//开启定位，获取位置initLocClient()
-	//baidu的receiver
+	private ImageView mIv_splash;
+	private Animation scaleAnim;
+	
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
@@ -44,8 +45,9 @@ public class SplashActivity extends BaseActivity {
 		mReceiver=new BaiduReceicer();
 		registerReceiver(mReceiver, iFilter);
 		
+		//TODO 开头动画
+		
 		if (userManager.getCurrentUser()!=null) {
-			updateUserInfo();
 			//TODO 延迟时间是否可以设置一下啊
 			mHandler.sendEmptyMessageDelayed(GO_HOME, 1000);
 		}else {
@@ -66,6 +68,9 @@ public class SplashActivity extends BaseActivity {
 		option.setIsNeedAddress(false);// 不需要包含地址信息
 		mLocationClient.setLocOption(option);
 		mLocationClient.start();
+		if (mLocationClient != null &&mLocationClient.isStarted()) {
+			mLocationClient.requestLocation();
+		}
 	}
 
 	private final static int GO_HOME = 100;
@@ -77,6 +82,7 @@ public class SplashActivity extends BaseActivity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case GO_HOME:
+				updateUserInfo();
 				Intent intent=new Intent(SplashActivity.this,MainActivity.class);
 				startAnimActivity(intent);
 				finish();
@@ -106,5 +112,12 @@ public class SplashActivity extends BaseActivity {
 		}
 	}
 	
-	
+	@Override
+	protected void onDestroy() {
+		if (mLocationClient != null && mLocationClient.isStarted()) {
+			mLocationClient.stop();
+		}
+		unregisterReceiver(mReceiver);
+		super.onDestroy();
+	}
 }

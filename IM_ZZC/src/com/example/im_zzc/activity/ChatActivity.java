@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -62,7 +62,6 @@ import cn.bmob.im.inteface.OnRecordChangeListener;
 import cn.bmob.im.inteface.UploadListener;
 import cn.bmob.v3.listener.FindListener;
 import cn.bmob.v3.listener.PushListener;
-
 import com.example.im_zzc.R.layout;
 import com.example.im_zzc.activity.ChatActivity;
 import com.example.im_zzc.MyMessageReceiver;
@@ -200,6 +199,7 @@ public class ChatActivity extends ActivityBase implements OnClickListener,
 	 */
 	class VoiceTouchListen implements View.OnTouchListener {
 
+		@SuppressLint("NewApi")
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
 			int action = event.getAction();
@@ -613,12 +613,14 @@ public class ChatActivity extends ActivityBase implements OnClickListener,
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			Log.i("chatActivity", "收到新的信息");
 			String from = intent.getStringExtra("fromId");
 			String msgId = intent.getStringExtra("msgId");
 			String msgTime = intent.getStringExtra("msgTime");
 			BmobMsg msg = BmobChatManager.getInstance(ChatActivity.this)
 					.getMessage(msgId, msgTime);
-			if (from != TargetId) {// 如果不是当前对象的消息，退出
+			if (!from.equals(TargetId)) {// 如果不是当前对象的消息，退出
+				Log.i("chatActivity", "收到的信息不是当前对象的;from:"+from+";target:"+TargetId);
 				return;
 			}
 			mAdapter.add(msg);
@@ -735,8 +737,8 @@ public class ChatActivity extends ActivityBase implements OnClickListener,
 			break;
 		case R.id.chat_add_tv_location:// 位置
 			//TODO 包找不到！！！
-			showToast("尚未完成，敬请期待");
-//			selectLocationFromMap();
+//			showToast("尚未完成，敬请期待");
+			selectLocationFromMap();
 			break;
 		default:
 			break;
@@ -828,6 +830,7 @@ public class ChatActivity extends ActivityBase implements OnClickListener,
 
 	@Override
 	public void onMessage(BmobMsg msg) {
+		Log.i("chatactivity", "事件监听收到消息");
 		Message handlerMessage = mHandler.obtainMessage(NEW_MESSAGE);
 		handlerMessage.obj = msg;
 		mHandler.sendMessage(handlerMessage);
@@ -842,7 +845,6 @@ public class ChatActivity extends ActivityBase implements OnClickListener,
 
 	@Override
 	public void onOffline() {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -870,12 +872,10 @@ public class ChatActivity extends ActivityBase implements OnClickListener,
 		public void handleMessage(Message msg) {
 			if (msg.what == NEW_MESSAGE) {
 				// TODO
+				Log.i("chatactivity", "handler处理消息更新ui");
 				BmobMsg bmobmsg = (BmobMsg) msg.obj;
 				String uId = bmobmsg.getBelongId();
-				BmobMsg message = BmobChatManager
-						.getInstance(ChatActivity.this).getMessage(
-								bmobmsg.getConversationId(),
-								bmobmsg.getMsgTime());
+				BmobMsg message = BmobChatManager.getInstance(ChatActivity.this).getMessage(bmobmsg.getConversationId(),bmobmsg.getMsgTime());
 				if (!uId.equals(TargetId)) {
 					return;
 				}

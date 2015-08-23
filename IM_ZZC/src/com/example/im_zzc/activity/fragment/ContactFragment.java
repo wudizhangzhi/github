@@ -100,7 +100,7 @@ public class ContactFragment extends FragmentBase implements
 
 					@Override
 					public void onTouchLetterChangeListener(String letter) {
-						//如果首次字母出现的位置存在，则跳转list的位置
+						// 如果首次字母出现的位置存在，则跳转list的位置
 						int position = userAdapter.getPositionForSection(letter
 								.charAt(0));
 						if (position != -1) {
@@ -128,10 +128,10 @@ public class ContactFragment extends FragmentBase implements
 
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(getActivity(),
-						NewFriendActivity.class);
-				intent.putExtra("from", "contact");
-				startAnimActivity(intent);
+				 Intent intent = new Intent(getActivity(),
+				 NewFriendActivity.class);
+				 intent.putExtra("from", "contact");
+				 startAnimActivity(intent);
 			}
 		});
 
@@ -217,6 +217,7 @@ public class ContactFragment extends FragmentBase implements
 		userAdapter.updateListView(filterData);
 	}
 
+	// TODO 排序出现问题，待判定
 	/**
 	 * 填入数据,将bmobchatuser的表转化为user表
 	 * 
@@ -237,7 +238,7 @@ public class ContactFragment extends FragmentBase implements
 			if (name != null) {
 				String pinyin = characterParser.getSpelling(name);
 				String first = pinyin.substring(0, 1).toUpperCase();
-				if (first.matches("[A-Z]")) {
+				if (first.matches("[a-zA-Z]")) {
 					sortModel.setSortLetters(first);
 				} else {
 					sortModel.setSortLetters("#");
@@ -337,17 +338,17 @@ public class ContactFragment extends FragmentBase implements
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 		// TODO 这里position为什么是要-1
-		User user = (User) userAdapter.getItem(position-1);
-		Log.i("contact页面", "点击位置："+position);
+		User user = (User) userAdapter.getItem(position - 1);
+		Log.i("contact页面", "点击位置：" + position);
 		// 进入好友信息页面
-//		Intent intent = new Intent(getActivity(), SetMyInfoActivity.class);
-//		intent.putExtra("from", "other");
-//		intent.putExtra("username", user.getUsername());
+		// Intent intent = new Intent(getActivity(), SetMyInfoActivity.class);
+		// intent.putExtra("from", "other");
+		// intent.putExtra("username", user.getUsername());
 		Intent intent = new Intent(getActivity(), SetMyInfoActivity.class);
-//		BmobChatUser chatuser=new BmobChatUser();
-//		chatuser.setObjectId(user.getObjectId());
-//		chatuser.setUsername(user.getUsername());
-//		chatuser.setAvatar(user.getAvatar());
+		// BmobChatUser chatuser=new BmobChatUser();
+		// chatuser.setObjectId(user.getObjectId());
+		// chatuser.setUsername(user.getUsername());
+		// chatuser.setAvatar(user.getAvatar());
 		intent.putExtra("from", "other");
 		intent.putExtra("username", user.getUsername());
 		startAnimActivity(intent);
@@ -356,16 +357,17 @@ public class ContactFragment extends FragmentBase implements
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view,
 			int position, long id) {
-		User user=(User) userAdapter.getItem(position);
+		User user = (User) userAdapter.getItem(position);
 		showDeleteDialog(user);
 		return false;
 	}
 
-	public void showDeleteDialog(final User user){
-		//TODO 测试按钮是否成功
-		DialogTip dialog=new DialogTip(getActivity(), "删除联系人："+user.getUsername(), "确定", true);
+	public void showDeleteDialog(final User user) {
+		// TODO 测试按钮是否成功
+		DialogTip dialog = new DialogTip(getActivity(), "删除联系人："
+				+ user.getUsername(), "确定", true);
 		dialog.setOnPositiveButtonClickListener(new onPositiveButtonClickListener() {
-			
+
 			@Override
 			public void onClick() {
 				deleteContact(user);
@@ -373,18 +375,19 @@ public class ContactFragment extends FragmentBase implements
 		});
 		dialog.show();
 	}
-	
+
 	/**
 	 * 删除联系人
+	 * 
 	 * @param user
 	 */
-	public void  deleteContact(User user){
-		final ProgressDialog progress=new ProgressDialog(getActivity());
+	public void deleteContact(User user) {
+		final ProgressDialog progress = new ProgressDialog(getActivity());
 		progress.setMessage("正在删除");
 		progress.setCanceledOnTouchOutside(false);
 		progress.show();
-		
-		userManager.deleteContact(user.getObjectId(), new UpdateListener(){
+
+		userManager.deleteContact(user.getObjectId(), new UpdateListener() {
 
 			@Override
 			public void onFailure(int arg0, String arg1) {

@@ -104,6 +104,7 @@ public class RecentFragment extends FragmentBase implements
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long id) {
 		final BmobRecent recent = mAdapter.getItem(position);
+		Log.i("recentFragment", "点击位置："+position+"；对方："+recent.getTargetid());
 		// 消除未读标记
 		// TODO 测试!!!!因为官方recent中头像为空，需要向服务器寻求数据
 		BmobDB.create(getActivity()).resetUnread(recent.getTargetid());
@@ -112,10 +113,9 @@ public class RecentFragment extends FragmentBase implements
 
 					@Override
 					public void onSuccess(List<BmobChatUser> arg0) {
-						// TODO Auto-generated method stub
 						// 传入的数据
 						BmobChatUser user = arg0.get(0);
-						Log.i("最近消息", "头像" + recent.getAvatar());
+						Log.i("最近消息", "头像:" + user.getAvatar());
 						Intent intent = new Intent(getActivity(),
 								ChatActivity.class);
 						intent.putExtra("user", user);

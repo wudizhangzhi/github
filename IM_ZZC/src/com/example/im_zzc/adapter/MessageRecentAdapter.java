@@ -27,7 +27,7 @@ public class MessageRecentAdapter extends ArrayAdapter<BmobRecent> {
 	public MessageRecentAdapter(Context context, int resource,
 			List<BmobRecent> data) {
 		super(context, resource, data);
-		// TODO Auto-generated constructor stub
+		
 		mContext = context;
 		mData = data;
 		mInflater = LayoutInflater.from(mContext);

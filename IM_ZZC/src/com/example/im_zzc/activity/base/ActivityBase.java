@@ -20,7 +20,6 @@ public class ActivityBase extends BaseActivity {
 	public BmobChatUser currentUser;
 	@Override
 	protected void onCreate(Bundle arg0) {
-		// TODO Auto-generated method stub
 		super.onCreate(arg0);
 		checkLogin();
 	}
@@ -29,7 +28,6 @@ public class ActivityBase extends BaseActivity {
 	 * 用于检测是否在同一设备上登陆
 	 */
 	private void checkLogin() {
-		// TODO Auto-generated method stub
 		BmobUserManager userManager = BmobUserManager.getInstance(this);
 		if (userManager.getCurrentUser() == null) {
 			// TODO showtoast,文字放value的string
@@ -39,6 +37,7 @@ public class ActivityBase extends BaseActivity {
 			finish();
 		}else {
 			currentUser=userManager.getCurrentUser();
+			updateUserLocation();
 		}
 	}
 

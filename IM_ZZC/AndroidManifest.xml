@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.im_zzc"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionCode="3"
+    android:versionName="1.2" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -118,7 +118,6 @@
         <activity android:name=".activity.SetMyInfoActivity" />
         <activity android:name=".activity.UpdateInfoActivity" />
         <activity android:name=".activity.LocationActivity" />
-        <activity android:name="com.baidu.autoupdatesdk.ConfirmDialogActivity" />
         
         <!-- 自动更新 -->
         <meta-data
@@ -166,12 +165,18 @@
         </receiver>
         <!-- 聊天消息接收器 -->
         <receiver android:name=".MyMessageReceiver" >
-            <intent-filter>
+            <intent-filter >
                 <action android:name="cn.bmob.push.action.MESSAGE" />
             </intent-filter>
         </receiver>
 
         <!-- IM聊天所需的Push end -->
+        <!-- 启动定时检测操作 -->
+         <service android:name="cn.bmob.im.poll.BmobPollService">
+            <intent-filter>
+                <action android:name="cn.bmob.im.service.BmobPollService"/>
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

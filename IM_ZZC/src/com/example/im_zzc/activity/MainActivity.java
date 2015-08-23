@@ -7,6 +7,7 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -46,7 +47,7 @@ public class MainActivity extends ActivityBase implements EventListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		//TODO 开启定时检测,不知道用处
+		// TODO 开启定时检测,不知道用处
 		BmobChat.getInstance(this).startPollService(30);
 		// 开启消息接收器
 		initNewTagReceiver();
@@ -82,9 +83,10 @@ public class MainActivity extends ActivityBase implements EventListener {
 				.add(R.id.main_fragment_container, contactFragment)
 				.hide(contactFragment).show(recentFragment).commit();
 	}
-	
+
 	/**
 	 * 底部3个按钮点击事件
+	 * 
 	 * @param view
 	 */
 	public void onTabSelect(View view) {
@@ -127,7 +129,7 @@ public class MainActivity extends ActivityBase implements EventListener {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		//取消定时服务
+		// 取消定时服务
 		BmobChat.getInstance(this).stopPollService();
 	}
 
@@ -136,13 +138,13 @@ public class MainActivity extends ActivityBase implements EventListener {
 		super.onPause();
 		// 清除事件监听
 		MyMessageReceiver.ehList.remove(this);
-		
+
 	}
 
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+
 		// 刷新两个tip的显示
 		if (BmobDB.create(this).hasUnReadMsg()) {
 			iv_message_tip.setVisibility(View.VISIBLE);
@@ -155,8 +157,8 @@ public class MainActivity extends ActivityBase implements EventListener {
 			iv_contact_tip.setVisibility(View.GONE);
 		}
 		// 获取事件监听
-		 MyMessageReceiver.ehList.add(this);
-		 MyMessageReceiver.mNewNum=0;
+		MyMessageReceiver.ehList.add(this);
+		MyMessageReceiver.mNewNum = 0;
 	}
 
 	@Override
@@ -224,7 +226,7 @@ public class MainActivity extends ActivityBase implements EventListener {
 		public void onReceive(Context context, Intent intent) {
 			// TODO 刷新界面，不知道为什么只传入null，是否能够刷新数据
 			refreshNewMessage(null);
-			// 终结广播
+			// TODO 终结广播
 			abortBroadcast();
 		}
 	}
@@ -237,7 +239,7 @@ public class MainActivity extends ActivityBase implements EventListener {
 		iv_contact_tip.setVisibility(View.VISIBLE);
 		if (currentTabIndex == 1) {
 			if (contactFragment != null) {
-				 contactFragment.refresh();
+				contactFragment.refresh();
 			}
 		} else {
 			// 消息提醒
@@ -257,8 +259,9 @@ public class MainActivity extends ActivityBase implements EventListener {
 	NewTagReceiver tagReceiver;
 
 	public void initNewTagReceiver() {
-		tagReceiver=new NewTagReceiver();
-		IntentFilter filter=new IntentFilter(BmobConfig.BROADCAST_ADD_USER_MESSAGE);
+		tagReceiver = new NewTagReceiver();
+		IntentFilter filter = new IntentFilter(
+				BmobConfig.BROADCAST_ADD_USER_MESSAGE);
 		filter.setPriority(3);
 		registerReceiver(tagReceiver, filter);
 	}
@@ -269,9 +272,10 @@ public class MainActivity extends ActivityBase implements EventListener {
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			BmobInvitation invitation = (BmobInvitation) intent
-					.getSerializableExtra("invate");
+					.getSerializableExtra("invite");
+			Log.i("主页面", "收到广播："+invitation.getFromname());
 			refreshInvite(invitation);
-			//终结广播
+			// 终结广播
 			abortBroadcast();
 		}
 	}

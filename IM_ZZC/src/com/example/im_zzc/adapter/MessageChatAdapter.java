@@ -94,7 +94,7 @@ public class MessageChatAdapter extends BaseListAdapter<BmobMsg> {
 				.considerExifParams(true).bitmapConfig(Bitmap.Config.RGB_565)
 				.displayer(new FadeInBitmapDisplayer(300))// 图片加载好后渐入动画时间
 				.build();
-		Log.i("消息适配器","adapter初始化适配器!!!!!target："+target.getAvatar());
+		Log.i("消息适配器","adapter初始化适配器!!!!!target："+target.getUsername());
 		Log.i("消息适配器","adapter初始化适配器!!!!!userid："+currentUser.getObjectId()+";"+currentUser.getAvatar());
 	}
 	
